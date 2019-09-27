@@ -1,5 +1,5 @@
 ---
-title: "Visualization"
+title: "Visualization 2"
 author: "Misbath Daouda"
 date: "9/26/2019"
 output: github_document
@@ -26,28 +26,17 @@ weather_df =
 weather_df
 ```
 
-## create a ggplot
 ```{r}
-ggplot(weather_df, aes(x = tmin, y = tmax)) +
-  geom_point()
+ggplot(weather_df, aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .5) +
+  geom_smooth(se = FALSE) + 
+  facet_grid(. ~ name)
 ```
 
-
-saving initial plots 
-
-
-adding color 
 ```{r}
-weather_df %>%
-  ggplot(aes(x = tmin, y = tmax)) + 
-  geom_point(aes(color = name))
-```
-
-why do aes positions matter 
-```{r}
-weather_df %>%
-  ggplot(aes(x = tmin, y = tmax)) + 
-  geom_point(aes(color = name), alpha = .4) + 
-  geom_smooth(se = FALSE)
+ggplot(weather_df, aes(x = date, y = tmax, color = name)) + 
+  geom_point(aes(size = prcp), alpha = .5) +
+  geom_smooth(se = FALSE) + 
+  facet_grid(. ~ name)
 ```
 
