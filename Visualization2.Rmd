@@ -1,7 +1,7 @@
 ---
-title: "Visualization 2"
+title: "Visualization2"
 author: "Misbath Daouda"
-date: "9/26/2019"
+date: "10/1/2019"
 output: github_document
 ---
 
@@ -9,13 +9,15 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(ggridges)
-library(magrittr)
+```
 
+```{r load_data, cache = TRUE}
 weather_df = 
-  rnoaa::meteo_pull_monitors(c("USW00094728", "USC00519397", "USS0023B17S"),
-                      var = c("PRCP", "TMIN", "TMAX"), 
-                      date_min = "2017-01-01",
-                      date_max = "2017-12-31") %>%
+  rnoaa::meteo_pull_monitors(
+    c("USW00094728", "USC00519397", "USS0023B17S"),
+    var = c("PRCP", "TMIN", "TMAX"), 
+    date_min = "2017-01-01",
+    date_max = "2017-12-31") %>%
   mutate(
     name = recode(id, USW00094728 = "CentralPark_NY", 
                       USC00519397 = "Waikiki_HA",
@@ -23,20 +25,80 @@ weather_df =
     tmin = tmin / 10,
     tmax = tmax / 10) %>%
   select(name, id, everything())
-weather_df
+```
+
+create ggplot
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5)
+```
+
+add labels 
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package"
+  )
+```
+
+x axis tick marks etc 
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package"
+  ) + 
+  scale_x_continuous(
+    breaks = c(-15, -5, 20), 
+    labels = c("-15º C", "0", "15"))
+```
+
+Transforming axes
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package") + 
+  scale_x_continuous(
+    breaks = c(-15, 0, 15), 
+    labels = c("-15ºC", "0", "15"),
+    limits = c(-20, 30)) + 
+  scale_y_continuous(
+    trans = "sqrt", 
+    position = "right")
+#can also do scale_y_sqrt()
 ```
 
 ```{r}
-ggplot(weather_df, aes(x = tmin, y = tmax, color = name)) + 
-  geom_point(alpha = .5) +
-  geom_smooth(se = FALSE) + 
-  facet_grid(. ~ name)
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package") + 
+  scale_color_hue(
+    name = "Location", 
+    h = c(100, 300))
+#scale_color_ will provide many options 
 ```
 
 ```{r}
-ggplot(weather_df, aes(x = date, y = tmax, color = name)) + 
-  geom_point(aes(size = prcp), alpha = .5) +
-  geom_smooth(se = FALSE) + 
-  facet_grid(. ~ name)
+
 ```
 
